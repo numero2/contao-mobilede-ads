@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    numero2_mobile.command.import_ads:
+        class: numero2\MobileDeAdsBundle\Command\ImportMobileAdsCommand
+        arguments:
+            - '@numero2_mobile.listener.import.ad'

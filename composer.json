@@ -1,0 +1,27 @@
+{
+    "name": "numero2/contao-mobilede-ads",
+    "type": "contao-bundle",
+    "description": "Import of ads from mobile.de",
+    "license": "LGPL-3.0+",
+    "require": {
+        "contao/core-bundle": "^4.9"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.0"
+    },
+    "conflict": {
+        "contao/core": "*",
+        "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "extra": {
+        "contao-manager-plugin": "numero2\\MobileDeAdsBundle\\ContaoManager\\Plugin"
+    },
+    "autoload": {
+        "psr-4": {
+            "numero2\\MobileDeAdsBundle\\": "src/"
+        },
+        "classmap": [
+            "src/Resources/contao/"
+        ]
+    }
+}

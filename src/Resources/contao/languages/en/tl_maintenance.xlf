@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<xliff version="1.1">
+<file datatype="php" original="src/Resources/contao/languages/en/tl_maintenance.php" source-language="en">
+<body>
+    <trans-unit id="tl_maintenance_jobs.mobile_ads.0">
+        <source>Import ads from mobile.de</source>
+    </trans-unit>
+    <trans-unit id="tl_maintenance_jobs.mobile_ads.1">
+        <source><![CDATA[Imports all ads from mobile.de into the table <code>tl_mobile_ad</code>. At the beginning of the import all records are set to unpublished and found or new ads are published again.]]></source>
+    </trans-unit>
+</body>
+</file>
+</xliff>

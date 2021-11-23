@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        public: true
+
+    numero2_mobile.listener.import.ad:
+        class: numero2\MobileDeAdsBundle\EventListener\Importer\AdListener
+        arguments:
+            - '@contao.framework'
+            - '@database_connection'
+            - '%mobile.ads_username%'
+            - '%mobile.ads_password%'
