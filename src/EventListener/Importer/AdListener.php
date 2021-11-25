@@ -271,12 +271,12 @@ class AdListener {
                 $this->importAd($aAd);
             }
 
-            System::log(sprintf('Imported %d ads from mobile.de',count($aAds)), __METHOD__, TL_CRON);
+            System::log(sprintf('Imported %d ads from mobile.de', count($aAds)), __METHOD__, TL_CRON);
 
             return true;
         }
 
-        System::log(sprintf('Could not find any ads to import from mobile.de',count($aAds)), __METHOD__, TL_ERROR);
+        System::log('Could not find any ads to import from mobile.de', __METHOD__, TL_ERROR);
 
         return false;
     }

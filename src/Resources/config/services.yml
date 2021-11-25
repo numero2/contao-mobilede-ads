@@ -6,3 +6,4 @@ services:
     numero2\MobileDeAdsBundle\Cron\Cron:
         arguments:
             - '@contao.framework'
+            - '@numero2_mobile.listener.import.ad'
