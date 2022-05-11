@@ -34,7 +34,12 @@ parameters:
 
 Usage
 --
-
 You can either start the import via `System › Maintenance › Import ads from mobile.de` or the command for the Contao console `contao:mobileads:import`.
 
 At the start of the import all Ads in the Contao database will be set to `published = ''` and all active ads found on mobile.de will then be published again.
+
+Helper
+--
+Functions added to helper converting the data:
+- `numero2\MobileDeAdsBundle\Util\DataUtil::wikitext2Html($text);` will convert the wikitext stored in `description_enriched` to html markup
+- `numero2\MobileDeAdsBundle\Util\DataUtil::convertKwToPS($kw);` will convert the kw to ps

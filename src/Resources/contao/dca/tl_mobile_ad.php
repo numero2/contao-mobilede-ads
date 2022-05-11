@@ -89,11 +89,60 @@ $GLOBALS['TL_DCA']['tl_mobile_ad'] = [
     ,   'emission_class' => [
             'sql'           => "varchar(64) NOT NULL default ''"
         ]
+        // emission-fuel-consumption
+    ,   'efc_envkv_compliant' => [
+            'sql'           => "char(1) NOT NULL default ''"
+        ]
+    ,   'efc_energy_efficiency_class' => [
+            'sql'           => "varchar(64) NOT NULL default ''"
+        ]
+    ,   'efc_co2_emission' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'efc_inner' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'efc_outer' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'efc_combined' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'efc_unit' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'efc_petrol_type' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'efc_combined_power_consumption' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
     ,   'emission_sticker' => [
             'sql'           => "varchar(64) NOT NULL default ''"
         ]
     ,   'fuel' => [
             'sql'           => "varchar(128) NOT NULL default ''"
+        ]
+    ,   'wltp_consumption_fuel_combined' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'wltp_co2_emission_combined' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'wltp_consumption_power_combined' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'wltp_electric_range' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'wltp_consumption_fuel_combined_weighted' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'wltp_consumption_power_combined_weighted' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
+        ]
+    ,   'wltp_co2_emission_combined_weighted' => [
+            'sql'           => "varchar(32) NOT NULL default ''"
         ]
     ,   'power' => [
             'sql'           => "varchar(128) NOT NULL default ''"
@@ -141,6 +190,9 @@ $GLOBALS['TL_DCA']['tl_mobile_ad'] = [
             'sql'           => "blob NULL"
         ]
     ,   'description' => [
+            'sql'           => "blob NULL"
+        ]
+    ,   'description_enriched' => [
             'sql'           => "blob NULL"
         ]
     ,   'image' => [

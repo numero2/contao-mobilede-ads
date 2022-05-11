@@ -28,7 +28,12 @@ class AdListener {
     /**
      * @var string
      */
-    const API_ENDPOINT = "https://services.mobile.de/search-api/";
+    const API_SEARCH_ENDPOINT = "https://services.mobile.de/search-api/";
+
+    /**
+     * @var string
+     */
+    const API_SELLER_ENDPOINT = "https://services.mobile.de/seller-api/";
 
     /**
      * @var Contao\CoreBundle\Framework\ContaoFramework
@@ -80,7 +85,7 @@ class AdListener {
         for( $page = 1; $page <= $maxPages; $page++ ) {
 
             $aParams['page.number'] = $page;
-            $url = self::API_ENDPOINT . 'search?'.str_replace("&amp;",'&',http_build_query($aParams));
+            $url = self::API_SEARCH_ENDPOINT . 'search?'.str_replace("&amp;",'&',http_build_query($aParams));
             $oResponse = $oClient->request('GET', $url, $aOptions);
 
             $data = [];
@@ -102,9 +107,11 @@ class AdListener {
     /**
      * Returns all details for the given ad
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return array
+     *
+     * @see https://services.mobile.de/schema/ad-1.0.xsd
      */
     private function getAdDetails( string $id ): array {
 
@@ -115,7 +122,7 @@ class AdListener {
         $oClient = HttpClient::create();
         $aOptions = $oOptions->toArray();
 
-        $url = self::API_ENDPOINT . 'ad/'.$id;
+        $url = self::API_SEARCH_ENDPOINT . 'ad/'.$id;
         $oResponse = $oClient->request('GET', $url, $aOptions);
 
         $data = [];
@@ -123,6 +130,45 @@ class AdListener {
         if( $oResponse->getStatusCode() === 200 ) {
             $data = self::parseNamespacedXML($oResponse->getContent());
         }
+
+        return $data;
+    }
+
+
+    /**
+     * Returns all details for the given seller id and ad id
+     *
+     * @param string $sellerId
+     * @param string $adId
+     *
+     * @return array
+     *
+     * https://services.mobile.de/docs/seller-api.html
+     */
+    private function getAdDetailsForSeller( string $sellerId, string $adId ): array {
+
+        // As we don't have access to this endpoint, we could not yet implement this
+        return [];
+        $oOptions = new HttpOptions();
+        $oOptions->setAuthBasic($this->username, $this->password);
+        // $oOptions->setHeaders(['Accept-Language'=>'de', 'Accept' => 'application/vnd.de.mobile.api+json']);
+        $oOptions->setHeaders(['Accept' => 'application/vnd.de.mobile.api+json']);
+
+        $oClient = HttpClient::create();
+        $aOptions = $oOptions->toArray();
+
+        $url = self::API_SELLER_ENDPOINT . 'sellers/';//.$sellerId.'/ads/'.$adId;
+        $oResponse = $oClient->request('GET', $url, $aOptions);
+        // echo $url ."\n";
+        $data = [];
+
+        if( $oResponse->getStatusCode() === 200 ) {
+            $data = $oResponse->getContent();
+            // $data = self::parseNamespacedXML($oResponse->getContent());
+            // echo print_r($data,1)."\n";
+        }
+        // echo print_r($oResponse,1)."\n";
+        // echo $oResponse->getStatusCode()."\n";
 
         return $data;
     }
@@ -294,6 +340,7 @@ class AdListener {
         $aAd = [
             'tstamp'                    => time()
         ,   'mobile_id'                 => $ad['@attributes']['key']
+        ,   'seller_id'                 => $ad['seller']['@attributes']['key']
         ,   'creation'                  => strtotime($ad['creation-date']['@attributes']['value'])
         ,   'modification'              => strtotime($ad['modification-date']['@attributes']['value'])
         ,   'url'                       => $ad['detail-page']['@attributes']['url']
@@ -314,8 +361,24 @@ class AdListener {
         ,   'door_count'                => $this->getValueFromSpecifics($ad['vehicle']['specifics']['door-count'])
         ,   'first_registration'        => $this->getValueFromSpecifics($ad['vehicle']['specifics']['first-registration'])
         ,   'emission_class'            => $this->getValueFromSpecifics($ad['vehicle']['specifics']['emission-class'])
+        ,   'efc_envkv_compliant'       => ((bool)$ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['envkv-compliant']) ? '1' : ''
+        ,   'efc_energy_efficiency_class' => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['energy-efficiency-class'] ?? ''
+        ,   'efc_co2_emission'          => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['co2-emission'] ?? ''
+        ,   'efc_inner'                 => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['inner'] ?? ''
+        ,   'efc_outer'                 => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['outer'] ?? ''
+        ,   'efc_combined'              => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['combined'] ?? ''
+        ,   'efc_unit'                  => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['unit'] ?? ''
+        ,   'efc_petrol_type'           => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['petrol-type'] ?? ''
+        ,   'efc_combined_power_consumption' => $ad['vehicle']['specifics']['emission-fuel-consumption']['@attributes']['combined-power-consumption'] ?? ''
         ,   'emission_sticker'          => $this->getValueFromSpecifics($ad['vehicle']['specifics']['emission-sticker'])
         ,   'fuel'                      => $this->getValueFromSpecifics($ad['vehicle']['specifics']['fuel'])
+        ,   'wltp_consumption_fuel_combined' => $ad['vehicle']['specifics']['wltp-values']['@attributes']['consumption-fuel-combined'] ?? ''
+        ,   'wltp_co2_emission_combined' => $ad['vehicle']['specifics']['wltp-values']['@attributes']['co2-emission-combined'] ?? ''
+        ,   'wltp_consumption_power_combined' => $ad['vehicle']['specifics']['wltp-values']['@attributes']['consumption-power-combined'] ?? ''
+        ,   'wltp_electric_range'       => $ad['vehicle']['specifics']['wltp-values']['@attributes']['electric-range'] ?? ''
+        ,   'wltp_consumption_fuel_combined_weighted' => $ad['vehicle']['specifics']['wltp-values']['@attributes']['consumption-fuel-combined-weighted'] ?? ''
+        ,   'wltp_consumption_power_combined_weighted' => $ad['vehicle']['specifics']['wltp-values']['@attributes']['consumption-power-combined-weighted'] ?? ''
+        ,   'wltp_co2_emission_combined_weighted' => $ad['vehicle']['specifics']['wltp-values']['@attributes']['co2-emission-combined-weighted'] ?? ''
         ,   'power'                     => $this->getValueFromSpecifics($ad['vehicle']['specifics']['power'])
         ,   'gearbox'                   => $this->getValueFromSpecifics($ad['vehicle']['specifics']['gearbox'])
         ,   'climatisation'             => $this->getValueFromSpecifics($ad['vehicle']['specifics']['climatisation'])
@@ -340,6 +403,8 @@ class AdListener {
         ,   'published'                 => '1'
         ];
 
+        // $aAdDetailsSeller = $this->getAdDetailsForSeller($aAd['seller_id'], $aAd['mobile_id']);
+
         $oAd = AdModel::findOneBy(['mobile_id=?'], [$aAd['mobile_id']]);
 
         if( $oAd && $aAd['modification'] == $oAd->modification ) {
@@ -350,8 +415,10 @@ class AdListener {
             return $oAd->id;
         }
 
+        // use xml api
         $aAdDetails = $this->getAdDetails($aAd['mobile_id']);
         $aAd['description'] = $aAdDetails['description'];
+        $aAd['description_enriched'] = $aAdDetails['enrichedDescription'];
         $aAd['images'] = $aAdDetails['images']['image'];
 
         foreach( $aAd['images'] as $key => $image) {
@@ -367,7 +434,7 @@ class AdListener {
 
         } else {
 
-            foreach( $aAd as $field => $value) {
+            foreach( $aAd as $field => $value ) {
                 $oAd->{$field} = $value;
             }
         }
@@ -393,21 +460,5 @@ class AdListener {
      */
     public function unpublishAll(): void {
         $this->connection->query("UPDATE ".AdModel::getTable()." SET published=''");
-    }
-
-
-    /**
-     * Converts kW to PS
-     *
-     * @param float kw
-     *
-     * @return float
-     **/
-    public static function convertKwToPS( float $kw ): float {
-
-        if( empty($kw) )
-            return 0;
-
-        return ceil($kw*1.358620689655172);
     }
 }
