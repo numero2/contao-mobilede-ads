@@ -268,6 +268,9 @@ class AdListener {
      */
     private function getValueFromSpecifics( $adAttribute, bool $isArray=false ) {
 
+        if( $adAttribute === null ) {
+            return '';
+        }
         if( is_string($adAttribute) ) {
             return $adAttribute;
         }
@@ -347,7 +350,7 @@ class AdListener {
         ,   'class'                     => $ad['vehicle']['class']['local-description']
         ,   'category'                  => $ad['vehicle']['category']['local-description']
         ,   'make'                      => $ad['vehicle']['make']['local-description']
-        ,   'model'                     => $ad['vehicle']['model']['local-description']
+        ,   'model'                     => $ad['vehicle']['model']['local-description'] ?? ''
         ,   'model_description'         => $ad['vehicle']['model-description']['@attributes']['value']
         ,   'damage_and_unrepaired'     => ($this->attributeIsTrue($ad['vehicle']['damage-and-unrepaired'])) ? '1' : ''
         ,   'accident_damaged'          => ($this->attributeIsTrue($ad['vehicle']['accident-damaged'])) ? '1' : ''
